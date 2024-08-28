@@ -245,11 +245,10 @@ input{
     opacity: 1;
     transition: opacity 500ms ease-in-out, z-index 600ms ease-in-out;
 }
-
-.modal-window.not-visible{
+.modal-window.not-visible,.modal-window-authentication.not-visible{
     transform: translate(-50%, -30%);
 }
-.modal-window{
+.modal-window,.modal-window-authentication{
     position: relative;
     width: 500px;
     height: 600px;
@@ -261,6 +260,14 @@ input{
     display:flex;
     flex-direction: column;
     transition: transform 500ms ease,z-index 500ms ease;
+}
+.modal-window-authentication{
+    width: 500px;
+    height: min-content;
+}
+.modal-window-authentication > a{
+    margin-block: 15px;
+    align-self: center;
 }
 form{
     width: 100%;

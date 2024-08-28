@@ -8,6 +8,7 @@ import { OpenImage } from './components/OpenImage.js';
 
 
 import {loadDocSnapshots,loadPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
+import { Authentification } from './components/Authentication.js';
 
 
 const cats =  [
@@ -25,6 +26,8 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
   const [newPostModal, setNewPostModal] = useState(false);
+  const [authentificationModal, setAuthentificationModal] = useState(false);
+
   
   const [collections, setData] = useState([]);
   const [newCollection, setNewData] = useState({});
@@ -86,13 +89,11 @@ function App() {
   return (
     <div className="App">
       <div className='side-bar'>
-        <div className='add-post' onClick={()=>{
-          setNewPostModal(true)
-        }}>
+        <div className='add-post' onClick={()=>setNewPostModal(true)}>
           <IoIosAddCircle className='add-icon'/>
           <div className='add-post-text'>Добавить пост</div>
         </div>
-        <div className='sign-in-reg'>
+        <div className='sign-in-reg' onClick={()=>setAuthentificationModal(true)}>
           <IoIosPerson className='sign-in-icon'/>
           <div className='sign-in-text'>Войти в аккаунт</div>
         </div>
@@ -159,13 +160,19 @@ function App() {
           </ul>
         </div>
       </div>
-      <OpenImage fullScreenImage = {fullScreenImage} setFullScreenImage={setFullScreenImage}></OpenImage>
+      <OpenImage 
+      fullScreenImage = {fullScreenImage} 
+      setFullScreenImage={setFullScreenImage}></OpenImage>
       <NewPostCollection 
       id={lastId} 
       categories = {cats} 
       newPostModal={newPostModal}
       setNewPostModal = {setNewPostModal} 
       setNewData={setNewData}></NewPostCollection>
+      <Authentification
+      authentificationModal={authentificationModal}
+      setAuthentificationModal = {setAuthentificationModal}
+      ></Authentification>
     </div>
   );
 }
