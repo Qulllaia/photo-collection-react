@@ -1,14 +1,16 @@
 import { useEffect,useState } from 'react';
+import {loadDocSnapshots,loadPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
+
 import { Collection } from './components/Collection.js';
 import { NewPostCollection } from './components/ModalNewPost.js';
+import { OpenImage } from './components/OpenImage.js';
+import { Authentification } from './components/Authentication.js';
 
 import './css/main.css'
-import { IoIosAddCircle,IoIosPerson, IoMdSearch } from "react-icons/io";
-import { OpenImage } from './components/OpenImage.js';
+import { IoIosAddCircle,IoIosPerson, IoMdSearch,IoIosExit  } from "react-icons/io";
+import { signOutMethod,getUserID } from './auth.js';
 
 
-import {loadDocSnapshots,loadPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
-import { Authentification } from './components/Authentication.js';
 
 
 const cats =  [
@@ -27,7 +29,7 @@ function App() {
   const [fullScreenImage, setFullScreenImage] = useState(null);
   const [newPostModal, setNewPostModal] = useState(false);
   const [authentificationModal, setAuthentificationModal] = useState(false);
-
+  const [userID, setUserID] = useState(null);
   
   const [collections, setData] = useState([]);
   const [newCollection, setNewData] = useState({});
@@ -37,7 +39,8 @@ function App() {
   const [pageChanging, setPageChanging] = useState(1);
   const [lastSnapEl,setLastSnapEl] = useState(null)
   const [firstSnapEl,setFirstSnapEl] = useState(0)
-  const [lastId, setLastId] = useState(1);
+  const [lastId, setLastId] = useState(1)
+  
 
   useEffect(()=>{
     if(Object.keys(newCollection).length > 0){
@@ -45,10 +48,9 @@ function App() {
     }
   },[newCollection])
 
-  
   useEffect(()=>{
+    setUserID(getUserID())
     setLoading(true)
-    console.log(categoryId)
     loadDocSnapshots(pageChanging,categoryId,firstSnapEl,lastSnapEl)
     .then((_docSnap)=>{
       var snapshotsList = []
@@ -93,10 +95,17 @@ function App() {
           <IoIosAddCircle className='add-icon'/>
           <div className='add-post-text'>Добавить пост</div>
         </div>
-        <div className='sign-in-reg' onClick={()=>setAuthentificationModal(true)}>
-          <IoIosPerson className='sign-in-icon'/>
-          <div className='sign-in-text'>Войти в аккаунт</div>
-        </div>
+        {userID === null ? 
+          <div className='sign-in-reg' onClick={()=>{setAuthentificationModal(true)}}>
+            <IoIosPerson className='sign-in-icon'/>
+            <div className='sign-in-text'>Войти в аккаунт</div>
+          </div>
+        :
+          <div className='sign-out-reg' onClick={()=>signOutMethod()}>
+            <IoIosExit className='sign-in-icon'/>
+            <div className='sign-out-text'>Выйти из аккаунта</div>
+          </div>
+        }
       </div>
       <div className='main-content'>
         <h1>Моя коллекция фотографий</h1>

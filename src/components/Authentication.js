@@ -1,6 +1,6 @@
 import { GrClose } from "react-icons/gr"
-import {useEffect, useState} from 'react'
-import { signUpMethod } from "../auth";
+import {useState} from 'react'
+import { signUpMethod,signInMethod } from "../auth.js";
 
 export const Authentification = ({authentificationModal, setAuthentificationModal}) =>{
     const [doesAccountExist, setDoesAccountExist] = useState(false);
@@ -14,14 +14,21 @@ export const Authentification = ({authentificationModal, setAuthentificationModa
                     doesAccountExist ? 
                         <>
                             <form className="Authentication" onSubmit={(e)=>{
+                                var signInData = []
                                 e.preventDefault()
-                                console.log(e.target.value)
+                                var formData = new FormData(e.target);
+                                for (var element of formData.entries()) {
+                                    signInData.push(element[1])
+                                }
+                                console.log(signInData)
+                                signInMethod(signInData[0],signInData[1])
+                                setAuthentificationModal(false)
                             }}>
                                 <h2>Авторизоваться</h2>
                                 <h3>Ваша электронная почта</h3>
-                                <input className='user-email' placeholder='Email'></input>
+                                <input className='user-email' placeholder='Email'name="email"></input>
                                 <h3>Ваш пароль</h3>
-                                <input className='user-password' placeholder='Password' ></input>
+                                <input className='user-password' placeholder='Password'name="password" ></input>
                                 <button type='submit'>Войти в аккаунт</button>
                             </form>
                             <a onClick={()=>setDoesAccountExist(false)}>На самом деле у меня нет аккаунта..</a>
@@ -33,9 +40,9 @@ export const Authentification = ({authentificationModal, setAuthentificationModa
                                 e.preventDefault()
                                 var formData = new FormData(e.target);
                                 for (var element of formData.entries()) {
-                                    signUpData.push(element)
+                                    signUpData.push(element[1])
                                 }
-                                signUpMethod(...signUpData)
+                                signUpMethod(signUpData[0],signUpData[1])
                                 setAuthentificationModal(false)
                             }}>
                                 <h2>Зарегистрироваться</h2>

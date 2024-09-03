@@ -28,9 +28,7 @@ export const loadPostsLenght = async (category) =>{
 export const loadDocSnapshots = async (pageChanging,category,firstSnapEl,lastSnapEl) =>{
     const documentOrder = pageChanging >= 0 ? 'asc' : 'desc'
     const pointOfMoveSnap = pageChanging > 0 ? lastSnapEl : firstSnapEl
-    console.log(pageChanging,firstSnapEl,lastSnapEl)
     if(pageChanging === 0){
-        console.log('pag 0')
         if(category === 0)
         var q = query(collectionsData, orderBy('id', documentOrder), startAfter(firstSnapEl), limit(4));
         else
@@ -38,7 +36,6 @@ export const loadDocSnapshots = async (pageChanging,category,firstSnapEl,lastSna
         return await getDocs(q);
     }
     else{
-        console.log('pag 1')
         if(category === 0)
         var q = query(collectionsData, orderBy('id', documentOrder), startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
         else

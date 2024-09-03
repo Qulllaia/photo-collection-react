@@ -41,7 +41,7 @@ html, body{
 .side-bar:hover ~ .main-content{
     margin-left: 300px;
 }
-.add-post,.sign-in-reg{
+.add-post,.sign-in-reg,.sign-out-reg{
     margin-top: 20px;
     width: min-content;
     height: min-content;
@@ -55,11 +55,11 @@ html, body{
 .add-post{
     margin-top:10px;
 }
-.add-icon,.sign-in-icon{
+.add-icon,.sign-in-icon,.sign-out-icon{
     width: 40px;
     height: 40px;
 }
-.add-post-text,.sign-in-text{
+.add-post-text,.sign-in-text,.sign-out-text{
     display: inline;
     margin-left: 10px;
     font-size: 20px;
@@ -68,7 +68,7 @@ html, body{
     /* opacity: 0; */
     transition: width 500ms ease;
 }
-.add-post:hover,.sign-in-reg:hover{
+.add-post:hover,.sign-in-reg:hover,.sign-out-reg:hover{
     border-bottom: 1px solid rgba(115, 115, 115, 0.506);
 }
 
