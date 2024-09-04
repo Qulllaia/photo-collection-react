@@ -1,5 +1,8 @@
 import { useEffect,useState } from 'react';
-import {loadDocSnapshots,loadPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
+import {onAuthStateChanged} from "firebase/auth";
+
+import {loadDocSnapshots,loadUserDocSnapshots,loadPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
+import { signOutMethod,getAuthData } from './auth.js';
 
 import { Collection } from './components/Collection.js';
 import { NewPostCollection } from './components/ModalNewPost.js';
@@ -7,10 +10,7 @@ import { OpenImage } from './components/OpenImage.js';
 import { Authentification } from './components/Authentication.js';
 
 import './css/main.css'
-import { IoIosAddCircle,IoIosPerson, IoMdSearch,IoIosExit  } from "react-icons/io";
-import { signOutMethod,getUserID } from './auth.js';
-
-
+import { IoIosAddCircle,IoIosPerson, IoMdSearch,IoIosExit,IoIosHome,IoIosImages} from "react-icons/io";
 
 
 const cats =  [
@@ -30,6 +30,7 @@ function App() {
   const [newPostModal, setNewPostModal] = useState(false);
   const [authentificationModal, setAuthentificationModal] = useState(false);
   const [userID, setUserID] = useState(null);
+  const [isHomePage, setIsHomePage] = useState(true);
   
   const [collections, setData] = useState([]);
   const [newCollection, setNewData] = useState({});
@@ -40,7 +41,6 @@ function App() {
   const [lastSnapEl,setLastSnapEl] = useState(null)
   const [firstSnapEl,setFirstSnapEl] = useState(0)
   const [lastId, setLastId] = useState(1)
-  
 
   useEffect(()=>{
     if(Object.keys(newCollection).length > 0){
@@ -48,63 +48,96 @@ function App() {
     }
   },[newCollection])
 
-  useEffect(()=>{
-    setUserID(getUserID())
-    setLoading(true)
-    loadDocSnapshots(pageChanging,categoryId,firstSnapEl,lastSnapEl)
-    .then((_docSnap)=>{
-      var snapshotsList = []
-      var resultSnapshotList = []
+  useEffect(() => {
+    onAuthStateChanged(getAuthData(), (user) =>{
+      setUserID(user ? user.uid : null)
+    })
+  }, []);
 
-      _docSnap.forEach((doc) => {
-        snapshotsList.push(doc.data());
+  useEffect(()=>{
+    setLoading(true)
+    if(isHomePage){
+      loadDocSnapshots(pageChanging,categoryId,firstSnapEl,lastSnapEl)
+      .then((_docSnap)=>postDisplay(_docSnap))
+      .then((snapshotList)=>setData(snapshotList))
+      // .catch((e)=>alert(e))
+      .finally(()=>{
+          setLoading(false)
+          setPageChanging(0)
+      })  
+      loadPostsLenght(categoryId).then((res)=>setPostsCount(res)).catch((e)=>alert(e))
+      loadLastId().then((res)=>setLastId(res.docs[0].data().id)).catch((e)=>alert(e))
+    }
+    else{
+      loadUserDocSnapshots(pageChanging,categoryId,firstSnapEl,lastSnapEl,userID)
+      .then((_docSnap)=>postDisplay(_docSnap))
+      .then((snapshotList)=>setData(snapshotList))
+      // .catch((e)=>alert(e))
+      .finally(()=>{
+          setLoading(false)
+          setPageChanging(0)
+      })  
+    }
+
+  },[categoryId,page,newCollection,isHomePage])
+
+  const postDisplay = (_docSnap) =>{
+    var snapshotsList = []
+    var resultSnapshotList = []
+
+    _docSnap.forEach((doc) => {
+      snapshotsList.push(doc.data());
+    });
+
+    if(pageChanging !== 0){
+      snapshotsList.slice(((Math.abs(pageChanging)-1)*4),(Math.abs(pageChanging)*4)).forEach((res)=>{
+          if(pageChanging >= 0)
+            resultSnapshotList.push(res)
+          else
+            resultSnapshotList.unshift(res);  
       });
-      if(pageChanging !== 0){
-        snapshotsList.slice(((Math.abs(pageChanging)-1)*4),(Math.abs(pageChanging)*4)).forEach((res)=>{
-            if(pageChanging >= 0)
-              resultSnapshotList.push(res)
-            else
-              resultSnapshotList.unshift(res);  
-        });
-        if(resultSnapshotList.length > 0){
-          setFirstSnapEl(resultSnapshotList[0].id)
-          setLastSnapEl(resultSnapshotList[resultSnapshotList.length-1].id)
-        }
+
+      if(resultSnapshotList.length > 0){
+        setFirstSnapEl(resultSnapshotList[0].id)
+        setLastSnapEl(resultSnapshotList[resultSnapshotList.length-1].id)
+      }
       }else{
         snapshotsList.forEach((res)=>{
             resultSnapshotList.push(res)
         });
-      }
-      return resultSnapshotList
-    })
-    .then((snapshotList)=>setData(snapshotList))
-    // .catch((e)=>alert(e))
-    .finally(()=>{
-        setLoading(false)
-        setPageChanging(0)
-
-    })  
-    loadPostsLenght(categoryId).then((res)=>setPostsCount(res)).catch((e)=>alert(e))
-    loadLastId().then((res)=>setLastId(res.docs[0].data().id)).catch((e)=>alert(e))
-  },[categoryId,page,newCollection])
+    }
+    return resultSnapshotList
+  }
 
   return (
     <div className="App">
       <div className='side-bar'>
-        <div className='add-post' onClick={()=>setNewPostModal(true)}>
-          <IoIosAddCircle className='add-icon'/>
-          <div className='add-post-text'>Добавить пост</div>
-        </div>
+       
         {userID === null ? 
           <div className='sign-in-reg' onClick={()=>{setAuthentificationModal(true)}}>
             <IoIosPerson className='sign-in-icon'/>
-            <div className='sign-in-text'>Войти в аккаунт</div>
+            <div className='sign-in-text'>Регистрация</div>
           </div>
         :
-          <div className='sign-out-reg' onClick={()=>signOutMethod()}>
-            <IoIosExit className='sign-in-icon'/>
-            <div className='sign-out-text'>Выйти из аккаунта</div>
-          </div>
+          <>
+            <div className='add-post' onClick={()=>setNewPostModal(true)}>
+              <IoIosAddCircle className='add-icon'/>
+              <div className='add-post-text'>Добавить пост</div>
+            </div>
+            <div className='home-page' onClick={()=>setIsHomePage(true)}>
+              <IoIosHome className='home-page-icon'/>
+              <div className='home-page-text'>Домашняя страница</div>
+            </div>
+            <div className='user-posts' onClick={()=>setIsHomePage(false)}>
+              <IoIosImages className='user-posts-icon'/>
+              <div className='user-posts-text'>Мои публикации</div>
+            </div>
+            <div className='sign-out-reg' onClick={()=>signOutMethod()}>
+              <IoIosExit className='sign-in-icon'/>
+              <div className='sign-out-text'>Выход из аккаунта</div>
+            </div>
+          </>
+          
         }
       </div>
       <div className='main-content'>
@@ -177,7 +210,9 @@ function App() {
       categories = {cats} 
       newPostModal={newPostModal}
       setNewPostModal = {setNewPostModal} 
-      setNewData={setNewData}></NewPostCollection>
+      setNewData={setNewData}
+      userID = {userID}
+      ></NewPostCollection>
       <Authentification
       authentificationModal={authentificationModal}
       setAuthentificationModal = {setAuthentificationModal}

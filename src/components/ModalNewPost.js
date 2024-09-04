@@ -12,12 +12,13 @@ const cats =  {
 }
 
 
-export const NewPostCollection = ({id,categories,newPostModal,setNewPostModal,setNewData}) =>{
+export const NewPostCollection = ({id,categories,newPostModal,setNewPostModal,setNewData, userID}) =>{
     const [fileURLs, setFileURLs] = useState([])
     const [isLoading, setLoading] = useState(false);
     const [isSubmit, setSubmit] = useState(false);
     const [category, setCategory] = useState(0);
     const [name, setName] = useState('');
+
     
     var newData = {}
     
@@ -32,6 +33,7 @@ export const NewPostCollection = ({id,categories,newPostModal,setNewPostModal,se
             newData.category=category
             newData.name=name 
             newData.photos=fileURLs
+            newData.userID = userID
             setNewData(newData)
             setNewPostModal(false)}
             setSubmit(false)

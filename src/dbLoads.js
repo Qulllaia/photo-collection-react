@@ -30,19 +30,37 @@ export const loadDocSnapshots = async (pageChanging,category,firstSnapEl,lastSna
     const pointOfMoveSnap = pageChanging > 0 ? lastSnapEl : firstSnapEl
     if(pageChanging === 0){
         if(category === 0)
-        var q = query(collectionsData, orderBy('id', documentOrder), startAfter(firstSnapEl), limit(4));
+            var q = query(collectionsData, orderBy('id', documentOrder), startAfter(firstSnapEl), limit(4));
         else
-        var q = query(collectionsData, where("category", "==", category),orderBy("id",documentOrder),startAfter(firstSnapEl), limit(4));
+            var q = query(collectionsData, where("category", "==", category),orderBy("id",documentOrder),startAfter(firstSnapEl), limit(4));
         return await getDocs(q);
     }
     else{
         if(category === 0)
-        var q = query(collectionsData, orderBy('id', documentOrder), startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
+            var q = query(collectionsData, orderBy('id', documentOrder), startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
         else
-        var q = query(collectionsData, where("category", "==", category),orderBy("id",documentOrder),startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
+            var q = query(collectionsData, where("category", "==", category),orderBy("id",documentOrder),startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
         return await await getDocs(q); 
     }
 } 
+export const loadUserDocSnapshots = async(pageChanging,category,firstSnapEl,lastSnapEl,userID) =>{
+    const documentOrder = pageChanging >= 0 ? 'asc' : 'desc'
+    const pointOfMoveSnap = pageChanging > 0 ? lastSnapEl : firstSnapEl
+    if(pageChanging === 0){
+        if(category === 0)
+            var q = query(collectionsData, where("userID", "==", userID), orderBy('id', documentOrder), startAfter(firstSnapEl), limit(4));
+        else
+            var q = query(collectionsData, where("userID", "==", userID), where("category", "==", category),orderBy("id",documentOrder),startAfter(firstSnapEl), limit(4));
+        return await getDocs(q);
+    }
+    else{
+        if(category === 0)
+            var q = query(collectionsData, where("userID", "==", userID), orderBy('id', documentOrder), startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
+        else
+            var q = query(collectionsData, where("userID", "==", userID), where("category", "==", category),orderBy("id",documentOrder),startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
+        return await await getDocs(q); 
+    }
+}
 
 export const fileLoader = async (files) =>  {
     var temp_array = []
