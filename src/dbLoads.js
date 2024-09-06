@@ -1,4 +1,4 @@
-import { getFirestore,collection, query, getDocs,doc, setDoc,orderBy, limit,getCountFromServer, startAfter, where, limitToLast } from "firebase/firestore";
+import { getFirestore,collection, query, getDocs,doc, setDoc,orderBy, limit,getCountFromServer, startAfter, startAt, where, limitToLast } from "firebase/firestore";
 import {getStorage, ref,uploadBytes,getDownloadURL } from "firebase/storage";
 
 import {app} from './firebase.js'
@@ -25,12 +25,23 @@ export const loadPostsLenght = async (category) =>{
         return temp.docs.length
     }
 }
+export const loadUserPostsLenght = async (category,userID) =>{
+    var q = null
+    if(category === 0){
+        q = query(collectionsData, where("userID", "==", userID));
+    }else{
+        q = query(collectionsData, where("category", "==", category), where("userID", "==", userID));
+    }
+    const temp = await getDocs(q)
+    return temp.docs.length
+}
+
 export const loadDocSnapshots = async (pageChanging,category,firstSnapEl,lastSnapEl) =>{
     const documentOrder = pageChanging >= 0 ? 'asc' : 'desc'
     const pointOfMoveSnap = pageChanging > 0 ? lastSnapEl : firstSnapEl
     if(pageChanging === 0){
         if(category === 0)
-            var q = query(collectionsData, orderBy('id', documentOrder), startAfter(firstSnapEl), limit(4));
+            var q = query(collectionsData, orderBy('id', documentOrder), startAt(firstSnapEl), limit(4));
         else
             var q = query(collectionsData, where("category", "==", category),orderBy("id",documentOrder),startAfter(firstSnapEl), limit(4));
         return await getDocs(q);
@@ -46,6 +57,7 @@ export const loadDocSnapshots = async (pageChanging,category,firstSnapEl,lastSna
 export const loadUserDocSnapshots = async(pageChanging,category,firstSnapEl,lastSnapEl,userID) =>{
     const documentOrder = pageChanging >= 0 ? 'asc' : 'desc'
     const pointOfMoveSnap = pageChanging > 0 ? lastSnapEl : firstSnapEl
+    console.log(pointOfMoveSnap)
     if(pageChanging === 0){
         if(category === 0)
             var q = query(collectionsData, where("userID", "==", userID), orderBy('id', documentOrder), startAfter(firstSnapEl), limit(4));

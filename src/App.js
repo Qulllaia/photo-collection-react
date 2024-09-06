@@ -1,7 +1,7 @@
 import { useEffect,useState } from 'react';
 import {onAuthStateChanged} from "firebase/auth";
 
-import {loadDocSnapshots,loadUserDocSnapshots,loadPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
+import {loadDocSnapshots,loadUserDocSnapshots,loadPostsLenght,loadUserPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
 import { signOutMethod,getAuthData } from './auth.js';
 
 import { Collection } from './components/Collection.js';
@@ -66,7 +66,6 @@ function App() {
           setPageChanging(0)
       })  
       loadPostsLenght(categoryId).then((res)=>setPostsCount(res)).catch((e)=>alert(e))
-      loadLastId().then((res)=>setLastId(res.docs[0].data().id)).catch((e)=>alert(e))
     }
     else{
       loadUserDocSnapshots(pageChanging,categoryId,firstSnapEl,lastSnapEl,userID)
@@ -74,10 +73,12 @@ function App() {
       .then((snapshotList)=>setData(snapshotList))
       // .catch((e)=>alert(e))
       .finally(()=>{
-          setLoading(false)
-          setPageChanging(0)
-      })  
+        setLoading(false)
+        setPageChanging(0)
+      })
+      loadUserPostsLenght(categoryId,userID).then((res)=>setPostsCount(res)).catch((e)=>alert(e))
     }
+    loadLastId().then((res)=>setLastId(res.docs[0].data().id)).catch((e)=>alert(e))
 
   },[categoryId,page,newCollection,isHomePage])
 
@@ -88,7 +89,6 @@ function App() {
     _docSnap.forEach((doc) => {
       snapshotsList.push(doc.data());
     });
-
     if(pageChanging !== 0){
       snapshotsList.slice(((Math.abs(pageChanging)-1)*4),(Math.abs(pageChanging)*4)).forEach((res)=>{
           if(pageChanging >= 0)
@@ -124,15 +124,27 @@ function App() {
               <IoIosAddCircle className='add-icon'/>
               <div className='add-post-text'>Добавить пост</div>
             </div>
-            <div className='home-page' onClick={()=>setIsHomePage(true)}>
+            <div className='home-page' onClick={()=>{
+              setIsHomePage(true)
+              setPage(1)
+              setFirstSnapEl(1)
+              setLastSnapEl(null)
+              setPageChanging(1)
+              }}>
               <IoIosHome className='home-page-icon'/>
               <div className='home-page-text'>Домашняя страница</div>
             </div>
-            <div className='user-posts' onClick={()=>setIsHomePage(false)}>
+            <div className='user-posts' onClick={()=>{
+              setIsHomePage(false)
+              setPageChanging(1)
+              }}>
               <IoIosImages className='user-posts-icon'/>
               <div className='user-posts-text'>Мои публикации</div>
             </div>
-            <div className='sign-out-reg' onClick={()=>signOutMethod()}>
+            <div className='sign-out-reg' onClick={()=>{
+                signOutMethod()
+                setIsHomePage(true)
+              }}>
               <IoIosExit className='sign-in-icon'/>
               <div className='sign-out-text'>Выход из аккаунта</div>
             </div>
@@ -141,7 +153,7 @@ function App() {
         }
       </div>
       <div className='main-content'>
-        <h1>Моя коллекция фотографий</h1>
+        {isHomePage ? <h1>Домашняя страница</h1> : <h1>Моя коллекция фотографий</h1>}
         <div className="navigation">
           <div className="tags">
             <ul>
