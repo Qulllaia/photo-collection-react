@@ -33,11 +33,9 @@ html, body{
     transition: width 500ms ease;
     overflow: hidden;
 }
-
 .side-bar:hover{
     width: 300px;
 }
-
 .side-bar:hover ~ .main-content{
     margin-left: 350px;
 }
@@ -71,7 +69,6 @@ html, body{
 .add-post:hover,.sign-in-reg:hover,.sign-out-reg:hover,.user-posts:hover,.home-page:hover{
     border-bottom: 1px solid rgba(115, 115, 115, 0.506);
 }
-
 .tags{
     display: flex;
     height: max-content;
@@ -82,7 +79,6 @@ ul{
     padding-left: 0;
     font-size: 20px;
 }
-
 li,input{
     height: max-content;
     display:inline-block;
@@ -103,7 +99,6 @@ li:hover{
     color: white;
     transition: background-color 500ms ease;
 }
-
 .photos{
     width: 100%;
     display:grid;
@@ -122,12 +117,9 @@ li:hover{
         grid-template-columns: repeat(3,1fr);
     }
 }
-
-
 .footer{
     height: 75px;
 }
-
 img{
     width: 100%;
     height: auto;
@@ -135,8 +127,6 @@ img{
     margin: 0;
     vertical-align: middle;
 }
-
-
 .showcase-2, .showcase-3{
     width:350px;
     height: min-content;
@@ -167,7 +157,6 @@ img{
     grid-row-gap: 5px;
     grid-column-gap: 5px;
 }
-
 .left-side-showcase.onepic{
     display: flex;
     justify-content: center;
@@ -287,7 +276,7 @@ form > span{
     margin-left: 10px;
     margin-top: 10px;
 }
-.isLoading.false{
+.is-loading.false{
     opacity: 0;
 }
 form > h2{
@@ -312,14 +301,12 @@ form > input[type="file"]{
 form > button:hover{
     border: 1px solid black;
 }
-
 form > select{
     border: 1px solid black;
     font-size: 20px;
     font-family: 'Comfortaa';
     border-radius: 5px;
 }
-
 .close-button{
     position: relative;
     margin-left:auto;
@@ -363,7 +350,6 @@ form > select{
 .search-button:hover{
     color: rgb(87, 87, 87);
 }
-
 .searching{
     height: max-content;
     display:inline-block;
@@ -376,7 +362,6 @@ form > select{
     border: 1px solid rgba(0, 0, 0, 0.202);
     transition: background-color 500ms ease;
 }
-
 .searching.active{ 
     height: max-content;
     display:inline-block;
@@ -388,4 +373,13 @@ form > select{
     padding:3px;
     padding-inline: 10px;
     border: 1px solid rgba(0, 0, 0, 0);
+}
+.show-error{
+    opacity: 0;
+    background-color: white;
+    color: black;
+}
+.show-error.active{
+    opacity: 1;
+    transform: all 1000ms;
 }

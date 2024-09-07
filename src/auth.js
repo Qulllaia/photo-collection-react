@@ -8,11 +8,35 @@ const auth = getAuth(app)
 // })
 
 export const signUpMethod = (email,password) =>{
-    createUserWithEmailAndPassword(auth,email,password)
+    return createUserWithEmailAndPassword(auth,email,password)
+    .then(()=>null)
+    .catch((e)=>{
+        if(e.message === 'Firebase: Error (auth/email-already-in-use).'){
+            return 'Данная почта уже занята кем-то'
+        }
+        else if(e.message === 'Firebase: Password should be at least 6 characters (auth/weak-password).'){
+            return 'Ваш пароль меньше 6 символов'   
+        }
+        else{
+            return e.message
+        }
+    })
 }
 
 export const signInMethod = (email,password)=>{
-    signInWithEmailAndPassword(auth,email,password)
+    return signInWithEmailAndPassword(auth,email,password)
+    .then(()=>null)
+    .catch((e)=>{
+        if(e.message === 'Firebase: Error (auth/invalid-credential).'){
+            return 'Неверный логин или пароль'
+        }
+        else if(e.message === 'Firebase: Error (auth/missing-password).'){
+            return 'Введите ваш пароль'   
+        }
+        else{
+            return e.message
+        }
+    })
 }
 export const signOutMethod = () => signOut(auth)
 

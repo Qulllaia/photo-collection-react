@@ -61,7 +61,7 @@ export const NewPostCollection = ({id,categories,newPostModal,setNewPostModal,se
                         ))}
                     </select>
                     <h3>Картинки для коллекции</h3>
-                    <span className={`isLoading ${isLoading ? 'true' : 'false'}`}>Идёт загрузка...</span>
+                    <span className={`is-loading ${isLoading ? 'true' : 'false'}`}>Идёт загрузка...</span>
                     <input type='file' multiple="multiple" accept="image/*" 
                     onChange={(event)=>{
                         setLoading(true)
