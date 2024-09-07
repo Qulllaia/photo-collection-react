@@ -24,11 +24,12 @@ export const NewPostCollection = ({id,categories,newPostModal,setNewPostModal,se
     
     const handleSubmit = (event) =>{
         event.preventDefault();
-        setCategory(cats[event.value])
+        if(!isLoading)
+            event.target.reset();
     }
 
     useEffect(() => {
-        if(isSubmit && !isLoading){
+        if(isSubmit){
             newData.id = (id+1)
             newData.category=category
             newData.name=name 
@@ -37,7 +38,7 @@ export const NewPostCollection = ({id,categories,newPostModal,setNewPostModal,se
             setNewData(newData)
             setNewPostModal(false)}
             setSubmit(false)
-        }, [isLoading, isSubmit]);
+        }, [isSubmit]);
     return(
         <div className={`modal-new-post${newPostModal ? '' : ' not-visible'}`}>
                 <div className={`modal-window${newPostModal ? '' : ' not-visible'}`}>
@@ -73,7 +74,8 @@ export const NewPostCollection = ({id,categories,newPostModal,setNewPostModal,se
                                    
                     }}></input>
                     <button type='submit' onClick={()=>{
-                        setSubmit(true)
+                        if(!isLoading && newData.photos !== null)
+                            setSubmit(true)
                     }}>Отправить</button>
                 </form>
             </div>

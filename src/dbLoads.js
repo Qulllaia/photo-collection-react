@@ -1,4 +1,4 @@
-import { getFirestore,collection, query, getDocs,doc, setDoc,orderBy, limit,getCountFromServer, startAfter, startAt, where, limitToLast } from "firebase/firestore";
+import { getFirestore,collection, query, getDocs,doc, setDoc,orderBy, limit,getCountFromServer, startAfter, startAt, where, limitToLast, endAt } from "firebase/firestore";
 import {getStorage, ref,uploadBytes,getDownloadURL } from "firebase/storage";
 
 import {app} from './firebase.js'
@@ -70,7 +70,7 @@ export const loadUserDocSnapshots = async(pageChanging,category,firstSnapEl,last
             var q = query(collectionsData, where("userID", "==", userID), orderBy('id', documentOrder), startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
         else
             var q = query(collectionsData, where("userID", "==", userID), where("category", "==", category),orderBy("id",documentOrder),startAfter(pointOfMoveSnap), limit(4 * (pageChanging ? Math.abs(pageChanging) : 1)));
-        return await await getDocs(q); 
+        return await getDocs(q); 
     }
 }
 
@@ -87,4 +87,9 @@ export const fileLoader = async (files) =>  {
 export const uploadPost = (post) =>{
     var name = new Date().toDateString() + ':' + new Date().toTimeString()
     setDoc(doc(db, "collections_data", (name)), post);
+}
+
+export const searchingName = async (filter) =>{
+    var q = query(collectionsData,orderBy('name'), startAfter(filter), endAt(filter + '\uf8ff'));
+    return await getDocs(q); 
 }

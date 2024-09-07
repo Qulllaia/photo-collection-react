@@ -1,7 +1,7 @@
 import { useEffect,useState } from 'react';
 import {onAuthStateChanged} from "firebase/auth";
 
-import {loadDocSnapshots,loadUserDocSnapshots,loadPostsLenght,loadUserPostsLenght,loadLastId,uploadPost} from './dbLoads.js'
+import {loadDocSnapshots,loadUserDocSnapshots,loadPostsLenght,loadUserPostsLenght,loadLastId,uploadPost,searchingName, fileLoader} from './dbLoads.js'
 import { signOutMethod,getAuthData } from './auth.js';
 
 import { Collection } from './components/Collection.js';
@@ -24,6 +24,7 @@ const cats =  [
 function App() {
   const [categoryId, setCategoryId] = useState(0);
   const [filter, setFilter] = useState('');
+  const [isSearchingWithName, setIsSearchingWithName] = useState(false);
   
   const [isLoading, setLoading] = useState(false);
   const [fullScreenImage, setFullScreenImage] = useState(null);
@@ -55,6 +56,7 @@ function App() {
   }, []);
 
   useEffect(()=>{
+
     setLoading(true)
     if(isHomePage){
       loadDocSnapshots(pageChanging,categoryId,firstSnapEl,lastSnapEl)
@@ -136,6 +138,7 @@ function App() {
             </div>
             <div className='user-posts' onClick={()=>{
               setIsHomePage(false)
+              setPage(1)
               setPageChanging(1)
               }}>
               <IoIosImages className='user-posts-icon'/>
@@ -167,37 +170,54 @@ function App() {
                     setLastSnapEl(null)
                     setPage(1)
                     setPageChanging(1)
+                    setIsSearchingWithName(false)
                   }}
                   >{cat.name}</li>
               ))}
             </ul>
             <input
-              placeholder='Найти тему' 
+              className={ isSearchingWithName ? 'searching active':'searching'}
+              placeholder='Поиск по названию' 
               onChange={(e)=>{
                 setFilter(e.target.value)
               }}
               />
               <IoMdSearch className="search-button"
-              onClick={()=>
-                setCategoryId(0)
+              onClick={()=>{
+                setIsSearchingWithName(true)
+                setCategoryId(null)
+                if(filter.length !== 0){
+                  searchingName(filter)
+                  .then((_docSnap)=>postDisplay(_docSnap))
+                  .then((snapshotsList)=>setData(snapshotsList))
+                }
+                else{
+                  setData('')
+                }
+              }
                 }></IoMdSearch>
           </div>
         </div>
         <div className="photos">
           {
           !isLoading ? 
+          collections.length > 0 ?
           collections.map((collection) =>(
             <Collection
               key={collection.name}
               name={collection.name}
               images={collection.photos}
               setFullScreenImage={setFullScreenImage}></Collection>
-          )
-          ): <h2>Идёт загрузка</h2>}
+          ))
+          :
+          <h2>Просим прощения, но по данному запросу ничего не было найдено :(</h2>
+          : <h2>Идёт загрузка</h2>
+        }
         </div>
         <div className="footer">
           <ul>
             {
+            isSearchingWithName === false ?
               [...Array(Math.ceil(postsCount/4))].map((_,index)=>(
                 <li
                   key={index}
@@ -209,6 +229,8 @@ function App() {
                   }}
                   >{index+1}</li>
               ))
+              :
+              <></>
             }
             
           </ul>

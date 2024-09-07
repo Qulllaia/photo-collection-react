@@ -363,3 +363,29 @@ form > select{
 .search-button:hover{
     color: rgb(87, 87, 87);
 }
+
+.searching{
+    height: max-content;
+    display:inline-block;
+    flex-direction: row;
+    margin: 5px;
+    background-color: rgb(239, 239, 239);
+    border-radius: 5px;
+    padding:3px;
+    padding-inline: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.202);
+    transition: background-color 500ms ease;
+}
+
+.searching.active{ 
+    height: max-content;
+    display:inline-block;
+    flex-direction: row;
+    margin: 5px;
+    background-color: rgb(0, 0, 0);
+    color: white;
+    border-radius: 5px;
+    padding:3px;
+    padding-inline: 10px;
+    border: 1px solid rgba(0, 0, 0, 0);
+}
